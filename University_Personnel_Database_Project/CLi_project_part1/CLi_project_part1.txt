@@ -1,0 +1,349 @@
+mysql> source /Users/chenyangli/Desktop/CS_F031/week10/CLi_project_part1.sql
+--------------
+/* project_part1.sql 
+  Chenyang Li
+   CS 31A, Spring 2022
+*/
+
+DROP DATABASE university
+--------------
+
+Query OK, 13 rows affected (0.08 sec)
+
+--------------
+CREATE DATABASE university
+--------------
+
+Query OK, 1 row affected (0.00 sec)
+
+Database changed
+--------------
+DROP TABLE IF EXISTS academic_session
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS department
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS parent_info
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS student
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS course
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS faculty
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS exam_type
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS exam
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS exam_result
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS student_att
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS student_course
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS faculty_course
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS faculty_login
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+-- create academic_session table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE academic_session (
+	session_id INT NOT NULL
+,	session_name VARCHAR(25) NOT NULL UNIQUE
+, 	CONSTRAINT as_pk PRIMARY KEY(session_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+-- creeatre department table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE department (
+	dept_id INT NOT NULL
+,	dept_name VARCHAR(25) NOT NULL UNIQUE
+,	head VARCHAR(25)
+,	CONSTRAINT dt_pk PRIMARY KEY(dept_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create parent_info table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE parent_info (
+	parent_id INT NOT NULL
+,	parent1_fn VARCHAR(25) NOT NULL
+,	parent1_ln VARCHAR(25) NOT NULL
+,	parent2_fn VARCHAR(25) NOT NULL
+,	parent2_ln VARCHAR(25) NOT NULL
+,	CONSTRAINT pi_pk PRIMARY KEY(parent_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create student table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE student (
+	student_id INT NOT NULL
+,	first_name VARCHAR(25) NOT NULL
+,	last_name VARCHAR(25) NOT NULL
+,	reg_year DATE NOT NULL
+,	email VARCHAR(50) NOT NULL UNIQUE
+,	parent_id INT NOT NULL
+,	CONSTRAINT student_pk PRIMARY KEY(student_id)
+,	CONSTRAINT student_pat_fk FOREIGN KEY (parent_id) 
+        REFERENCES parent_info (parent_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+-- create course table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE course(
+	course_id INT NOT NULL
+,	course_name VARCHAR(100) NOT NULL UNIQUE
+,	session_id INT NOT NULL
+,	dept_id INT NOT NULL
+,	logon_id VARCHAR(25)
+,	pass_word VARCHAR(25)
+,	building VARCHAR(25)
+,	room	INT
+,	date_time VARCHAR(25)
+,	CONSTRAINT course_pk PRIMARY KEY(course_id)
+,	CONSTRAINT cours_as_fk FOREIGN KEY(session_id)
+		REFERENCES academic_session(session_id)
+,	CONSTRAINT cours_dept_fk FOREIGN KEY(dept_id)
+		REFERENCES department(dept_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create faulcty table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE faculty (
+	faculty_id INT NOT NULL
+,	first_name VARCHAR(25)
+,	last_name VARCHAR(25)
+,	faculty_email VARCHAR(100)
+,	salary INT
+,	insurance VARCHAR(25)
+,	hourly_rate INT
+,	dept_id INT
+,	CONSTRAINT fy_pk PRIMARY kEY(faculty_id)
+, 	CONSTRAINT fy_dpt_fk FOREIGN KEY(dept_id)
+		REFERENCES department(dept_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create exam_type table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE exam_type (
+	exam_type VARCHAR(10) NOT NULL
+,	name VARCHAR(50)
+,	description VARCHAR(150)
+,	CONSTRAINT etp_pk PRIMARY KEY(exam_type)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create table exam
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE exam(
+	exam_id INT NOT NULL
+,	start_date DATE
+,	exam_type VARCHAR(25)
+,	course_id INT
+,	CONSTRAINT exm_pk PRIMARY KEY(exam_id)
+,	CONSTRAINT exm_etp_fk FOREIGN KEY(exam_type)
+		REFERENCES exam_type(exam_type)
+,	CONSTRAINT ext_cours_fk FOREIGN KEY(course_id)
+		REFERENCES course(course_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+-- create exam_result tbale
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE exam_result (
+	student_id INT NOT NULL
+,	course_id INT NOT NULL
+,	exam_id INT NOT NULL
+,	exam_grade INT
+,	CONSTRAINT ert_pk PRIMARY KEY(student_id, course_id, exam_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create student_att table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE student_att (
+	student_id INT NOT NULL 
+,	session_id INT
+,	num_work_days INT
+,	num_work_off INT
+,	exam_eligibility CHAR(1)
+, 	CONSTRAINT satt_pk PRIMARY KEY(student_id, session_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create student_course table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE student_course (
+	student_id INT NOT NULL
+,	course_id INT NOT NULL
+,	grade	CHAR(1) NOT NULL
+,	CONSTRAINT cs_pk PRIMARY KEY(student_id, course_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+-- create faculty_course table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE faculty_course (
+	faculty_id INT NOT NULL
+,	course_id INT
+,	contact_hrs INT
+,	CONSTRAINT fcse_pk PRIMARY KEY(course_id, faculty_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+-- create table faculty_login
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE faculty_login (
+	faculty_id INT NOT NULL
+,	login_date_time DATETIME DEFAULT CURRENT_TIMESTAMP
+,	CONSTRAINT fln_pk PRIMARY KEY(faculty_id, login_date_time)
+)
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> notee
